@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="fr" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Modifier un Produit SB!</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@1.0.2/css/bulma.min.css">
+</head>
+<body>
+<section class="section">
+    <div class="container is-flex is-justify-content-center is-align-items-center">
+
+        <form class="box" enctype="multipart/form-data" method="post" th:action="@{/produits/modifier(id = ${produit.id})}"  th:object="${produitDto}" style="min-width: 50%">
+            <h1 class="title">
+                Modifier un produit
+            </h1>
+            <div class="field">
+                <label class="label">ID</label>
+                <div class="control">
+                    <input readonly th:value="${produit.id}" class="input">
+                </div>
+            </div>
+
+            <div class="field">
+                <label class="label">Nom</label>
+                <div class="control">
+                    <input th:field="${produitDto.nom}" class="input" type="text" placeholder="Entrez le nom du produit">
+                    <p th:if="${#fields.hasErrors('nom')}" th:errorclass="'help is-danger is-size-6'" th:errors="${produitDto.nom}"></p>
+                    <p th:if="${!#fields.hasErrors('nom') && !#strings.isEmpty(produitDto.nom)} " th:class="'help has-text-success is-size-6'" th:text="'Nom valide'"></p>
+                </div>
+            </div>
+
+            <div class="field">
+                <label class="label">Marque</label>
+                <div class="control">
+                    <input th:field="${produitDto.marque}" class="input" type="text" placeholder="Entrez la marque du produit">
+                    <p th:if="${#fields.hasErrors('marque')}" th:errorclass="'help is-danger is-size-6'" th:errors="${produitDto.marque}"></p>
+                    <p th:if="${!#fields.hasErrors('marque') && !#strings.isEmpty(produitDto.marque)}" th:class="'help has-text-success is-size-6'" th:text="'Marque valide'"></p>
+                </div>
+            </div>
+
+            <div class="field">
+                <label class="label">Description</label>
+                <div class="control">
+                    <textarea th:field="${produitDto.description}" class="textarea" placeholder="Entrez la description du produit"></textarea>
+                    <p th:if="${#fields.hasErrors('description')}" th:errorclass="'help is-danger is-size-6'" th:errors="${produitDto.description}"></p>
+                    <p th:if="${!#fields.hasErrors('description') && !#strings.isEmpty(produitDto.description)}" th:class="'help has-text-success is-size-6'" th:text="'Description valide'"></p>
+                </div>
+            </div>
+
+            <div class="field">
+                <label class="label">Catégorie</label>
+                <div class="control">
+                    <div class="select">
+                        <select th:field="${produitDto.categorie}">
+                            <option value="">-- Sélectionner une catégorie --</option>
+                            <option value="Écouteurs sans fil">Écouteurs sans fil</option>
+                            <option value="Tablette">Tablette</option>
+                            <option value="Casque Bluetooth">Casque Bluetooth</option>
+                            <option value="Smartphone">Smartphone</option>
+                            <option value="Montre Connectée">Montre Connectée</option>
+                            <option value="Ordinateur">Ordinateur</option>
+                        </select>
+                    </div>
+                    <p th:if="${#fields.hasErrors('categorie')}" th:errorclass="'help is-danger is-size-6'" th:errors="${produitDto.categorie}"></p>
+                    <p th:if="${!#fields.hasErrors('categorie') && !#strings.isEmpty(produitDto.categorie)}" th:class="'help has-text-success is-size-6'" th:text="'Categorie valide'"></p>
+                </div>
+            </div>
+
+            <figure class="image is-128x128">
+                <img th:src="@{'/img/' + ${produit.imageFileName}}" style="height: 128px; width: auto" alt="L'image du produit" />
+            </figure>
+
+            <div class="field">
+                <label class="label">Image</label>
+                <div class="control">
+                    <div class="file is-info has-name">
+                        <label class="file-label">
+                            <input th:field="${produitDto.imageFile}" class="file-input" type="file" name="resume" onchange="updateFileName()" />
+                            <span class="file-cta">
+                              <span class="file-icon">
+                                <i class="fas fa-upload"></i>
+                              </span>
+                              <span class="file-label"> Inserer le fichier </span>
+                            </span>
+                            <span class="file-name" id="file-name">Aucun fichier choisi </span>
+                        </label>
+                    </div>
+                    <p th:if="${#fields.hasErrors('imageFile')}" th:errorclass="'help is-danger is-size-6'" th:errors="${produitDto.imageFile}"></p>
+                    <p th:if="${!#fields.hasErrors('imageFile') && !#strings.isEmpty(produitDto.imageFile)}" th:class="'help has-text-success is-size-6'" th:text="'Le fichier est valide'"></p>
+
+                </div>
+            </div>
+
+            <div class="field">
+                <label class="label">Prix</label>
+                <div class="control">
+                    <input th:field="${produitDto.prix}" class="input" type="number" min="0" placeholder="Entrez le prix du produit">
+                    <p th:if="${#fields.hasErrors('prix')}" th:errorclass="'help is-danger is-size-6'" th:errors="${produitDto.prix}"></p>
+                    <p th:if="${!#fields.hasErrors('prix') && produitDto.prix!=0}" th:class="'help has-text-success is-size-6'" th:text="'Prix valide'"></p>
+                </div>
+            </div>
+
+            <div class="field">
+                <label class="label">Créer le </label>
+                <div class="control">
+                    <input readonly th:value="${produit.creationDate}" class="input">
+                </div>
+            </div>
+
+            <div class="field">
+                <label class="label">Modifier le </label>
+                <div class="control">
+                    <input readonly th:value="${produit.modificationDate}" class="input">
+                </div>
+            </div>
+
+            <div class="field is-grouped">
+                <div class="control">
+                    <button class="button is-link">Envoyer</button>
+                </div>
+                <div class="control">
+                    <a th:href="@{/produits}" class="button is-link is-danger">Annuler</a>
+                </div>
+            </div>
+        </form>
+    </div>
+</section>
+
+<script>
+    function updateFileName() {
+        const fileInput = document.querySelector('input[type="file"]');
+        document.getElementById('file-name').textContent = fileInput.files.length > 0 ? fileInput.files[0].name : "Aucun fichier choisi";
+    }
+</script>
+
+
+</body>
+</html>

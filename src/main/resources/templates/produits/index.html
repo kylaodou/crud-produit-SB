@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="fr" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Liste des Produits SB!</title>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@1.0.2/css/bulma.min.css">
+</head>
+<body>
+<section class="section">
+    <div class="container">
+        <h1 class="title">
+            Hello Tout le Monde
+        </h1>
+        <p class="subtitle">
+            Bienvenue dans le <strong>CRUD Produit</strong>!
+        </p>
+        <a th:href="@{/produits/create}" class="button is-info is-hovered">Ajouter Produit</a>
+        <table class="table mt-5  is-bordered is-striped is-narrow is-hoverable is-fullwidth">
+            <thead>
+                <tr  class="is-info">
+                    <th>Id</th>
+                    <th>Nom</th>
+                    <th>Marque</th>
+                    <th>Description</th>
+                    <th>Catégorie</th>
+                    <th>Image</th>
+                    <th>Prix</th>
+                    <th>Crée le</th>
+                    <th>Modifier le</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr th:each="produit : ${produits}">
+                    <td th:text="${produit.id}"></td>
+                    <td th:text="${produit.nom}"></td>
+                    <td th:text="${produit.marque}"></td>
+                    <td th:text="${produit.description}"></td>
+                    <td th:text="${produit.categorie}"></td>
+                    <td>
+                        <img th:src="@{'/img/' + ${produit.imageFileName}}" width="100" alt="Image du produit">
+                    </td>
+                    <td th:text="@{${produit.prix} + 'FCFA'}"></td>
+                    <td th:text="${#dates.format(produit.creationDate, 'dd-MM-yyyy HH:mm:ss')}"></td>
+                    <td th:text="${#dates.format(produit.modificationDate, 'dd-MM-yyyy HH:mm:ss')}"></td>
+                    <td style="white-space: nowrap" >
+                        <a th:href="@{/produits/modifier(id=${produit.id})}" class="button is-warning" style="border-radius: 5px">Modifier</a>
+                        <a href="#" th:id="${produit.id}" class="button is-danger" onclick="confirmationSuppression(event)" style="border-radius: 5px">Supprimer</a>
+                    </td>
+
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</section>
+<script th:if="${successCreation}">
+        Swal.fire({
+            title: "Succès !",
+            text: "Le produit a été ajouté avec succès.",
+            icon: "success"
+        });
+</script>
+<script th:if="${successModification}">
+    Swal.fire({
+        title: "Succès !",
+        text: "Le produit a été modifier avec succès.",
+        icon: "success"
+    });
+</script>
+<script>
+    function confirmationSuppression(event){
+        event.preventDefault();
+        Swal.fire({
+            title: "Voulez vous vraiment supprimer?",
+            text: "Vous ne pourrais pas revenir en arrière!",
+            icon: "warning",
+            showCancelButton: true,
+            confirmButtonColor: "#3085d6",
+            cancelButtonColor: "#d33",
+            confirmButtonText: "Oui, supprimer!"
+        }).then((result) => {
+            if (result.isConfirmed) {
+                Swal.fire({
+                    title: "Supprimer!",
+                    text: "Le produit à été supprimer avec succès.",
+                    icon: "success"
+                });
+                window.location.href = '/produits/supprimer?id=' + event.target.getAttribute('id');
+            }
+        });
+    }
+</script>
+</body>
+</html>
